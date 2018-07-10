@@ -216,29 +216,6 @@ RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
 ;fi
 
 ###########################################################################
-# PHP Memcache: (Not Memcached)
-###########################################################################
-
-ARG INSTALL_MEMCACHE=false
-
-RUN if [ ${INSTALL_MEMCACHE} = true ]; then \
-    # Install the php memcache extension
-    curl -L -o /tmp/memcache-3.0.8.tar.gz "https://pecl.php.net/get/memcache-3.0.8.tgz" \
-    && mkdir -p memcache \
-    && tar -C memcached -zxvf /tmp/memcache-3.0.8.tar.gz --strip 1 \
-    && ( \
-        cd memcache-3.0.8 \
-        && phpize \
-        && ./configure \
-        && make -j$(nproc) \
-        && make install \
-    ) \
-    && rm -r memcache-3.0.8 \
-    && rm /tmp/memcache-3.0.8.tar.gz \
-    && docker-php-ext-enable memcache \
-;fi
-
-###########################################################################
 # Exif:
 ###########################################################################
 

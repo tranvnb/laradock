@@ -1,5 +1,5 @@
-#FROM webdevops/apache:ubuntu-16.04
-FROM webdevops/php-apache-dev:5.6
+FROM webdevops/apache:ubuntu-16.04
+#FROM webdevops/php-apache-dev:5.6
 
 LABEL maintainer="Eric Pfeiffer <computerfr33k@users.noreply.github.com>"
 
@@ -24,8 +24,8 @@ COPY sites/*.conf /etc/apache2/sites-enabled/
 
 RUN apt-get update
 RUN apt-get install vim -y
-RUN a2enmod rewrite
-RUN a2enmod headers
+#RUN a2enmod rewrite
+#RUN a2enmod headers
 #RUN service apache2 restart
 #RUN /etc/init.d/apache2 reload
 

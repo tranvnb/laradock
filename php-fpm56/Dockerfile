@@ -214,9 +214,9 @@ RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
     && rm /tmp/memcached.tar.gz \
     && docker-php-ext-enable memcached \
 ############################ Install igbinary ############################
-    && curl -L -o /tmp/igbinary-2.0.7.tar.gz "https://pecl.php.net/get/igbinary-2.0.7.tgz" \
+    && curl -L -o /tmp/igbinary-2.0.7.tgz "https://pecl.php.net/get/igbinary-2.0.7.tgz" \
     && mkdir -p igbinary-2.0.7 \
-    && tar -C igbinary-2.0.7 -zxvf /tmp/igbinary-2.0.7.tar.gz --strip 1 \
+    && tar -C igbinary-2.0.7 -zxvf /tmp/igbinary-2.0.7.tgz --strip 1 \
     && ( \
         cd igbinary-2.0.7 \
         && phpize \
@@ -225,7 +225,7 @@ RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
         && make install \
     ) \
     && rm -r igbinary-2.0.7 \
-    && rm /tmp/igbinary-2.0.7.tar.gz \
+    && rm /tmp/igbinary-2.0.7.tgz \
     && docker-php-ext-enable igbinary \
 ;fi
 
@@ -237,9 +237,9 @@ ARG INSTALL_MEMCACHE=false
 
 RUN if [ ${INSTALL_MEMCACHE} = true ]; then \
     # Install the php memcache extension
-    curl -L -o /tmp/memcache-3.0.8.tar.gz "https://pecl.php.net/get/memcache-3.0.8.tgz" \
+    curl -L -o /tmp/memcache-3.0.8.tgz "https://pecl.php.net/get/memcache-3.0.8.tgz" \
     && mkdir -p memcache-3.0.8 \
-    && tar -C memcache-3.0.8 -zxvf /tmp/memcache-3.0.8.tar.gz --strip 1 \
+    && tar -C memcache-3.0.8 -zxvf /tmp/memcache-3.0.8.tgz --strip 1 \
     && ( \
         cd memcache-3.0.8 \
         && phpize \
@@ -248,7 +248,7 @@ RUN if [ ${INSTALL_MEMCACHE} = true ]; then \
         && make install \
     ) \
     && rm -r memcache-3.0.8 \
-    && rm /tmp/memcache-3.0.8.tar.gz \
+    && rm /tmp/memcache-3.0.8.tgz \
     && docker-php-ext-enable memcache \
 ;fi
 
