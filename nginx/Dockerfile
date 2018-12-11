@@ -24,8 +24,8 @@ ARG PHP_UPSTREAM_PORT=9000
 RUN echo "upstream php-upstream { server ${PHP_UPSTREAM_CONTAINER}:${PHP_UPSTREAM_PORT}; }" > /etc/nginx/conf.d/upstream.conf \
     && rm /etc/nginx/conf.d/default.conf
 
-RUN export PHP_IDE_CONFIG=“serverName=laradock”
-RUN export XDEBUG_CONFIG="idekey=PHPSTORM"
+#RUN export PHP_IDE_CONFIG="serverName=laradock"
+#RUN export XDEBUG_CONFIG="idekey=PHPSTORM"
 
 CMD ["nginx"]
 

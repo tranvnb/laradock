@@ -147,8 +147,10 @@ services:
         - "clientcenter.localhost:${DOCKER_HOST_IP}"
         - "biometrics.localhost:${DOCKER_HOST_IP}"
         - "reportservice.localhost:${DOCKER_HOST_IP}"
+        - "authorservice.localhost:${DOCKER_HOST_IP}"
       environment:
         - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
+        - XDEBUG_CONFIG=${XDEBUG_CONFIG}
       networks:
         - backend
 ### PHP-FPM ##############################################
@@ -191,6 +193,7 @@ services:
         - "dockerhost:${DOCKER_HOST_IP}"
       environment:
         - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
+        - XDEBUG_CONFIG=${XDEBUG_CONFIG}
       networks:
         - backend
 ### PHP Worker ############################################
