@@ -97,7 +97,15 @@ Beanstalkd - RabbitMQ - PHP Worker
 - **Queueing Management:**
 Beanstalkd Console - RabbitMQ Console
 - **Random Tools:**
+<<<<<<< HEAD
 Mailu - HAProxy - Certbot - Blackfire - Selenium - Jenkins - ElasticSearch - Kibana - Grafana - Gitlab - Mailhog - MailDev - Minio - Varnish - Swoole - NetData - Portainer - Laravel Echo - Phalcon...
+=======
+<<<<<<< HEAD
+HAProxy - Certbot - Blackfire - Selenium - Jenkins - ElasticSearch - Kibana - Grafana - Mailhog - MailDev - Minio - Varnish - Swoole - Laravel Echo...
+=======
+Mailu - HAProxy - Certbot - Blackfire - Selenium - Jenkins - ElasticSearch - Kibana - Grafana - Gitlab - Mailhog - MailDev - Minio - Varnish - Swoole - NetData - Portainer - Laravel Echo - Phalcon...
+>>>>>>> 83a24efa709d15037b0d06ca7f4df235e240d642
+>>>>>>> laradock-master
 
 Laradock introduces the **Workspace** Image, as a development environment.
 It contains a rich set of helpful tools, all pre-configured to work and integrate with almost any combination of Containers and tools you may choose.

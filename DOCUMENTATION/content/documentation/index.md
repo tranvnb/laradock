@@ -599,6 +599,11 @@ docker-compose up -d php-worker
 
 
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> laradock-master
 
 <br>
 <a name="Use-Mailu"></a>
@@ -680,6 +685,10 @@ You may wanna change the default security configuration, so go to `http://localh
 
 
 
+<<<<<<< HEAD
+=======
+>>>>>>> 83a24efa709d15037b0d06ca7f4df235e240d642
+>>>>>>> laradock-master
 <br>
 <a name="Use-Redis"></a>
 ## Use Redis
@@ -1082,11 +1091,20 @@ docker-compose up -d rethinkdb
 - set the `DB_DATABASE` to `database`.
 
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> laradock-master
 #### Additional Notes
 
 - You may do backing up of your data using the next reference: [backing up your data](https://www.rethinkdb.com/docs/backup/).
 
 
+<<<<<<< HEAD
+=======
+>>>>>>> 83a24efa709d15037b0d06ca7f4df235e240d642
+>>>>>>> laradock-master
 <br>
 <a name="Use-Minio"></a>
 ## Use Minio
@@ -1302,6 +1320,11 @@ To install CodeIgniter 3 on Laradock all you have to do is the following simple 
 3 - Re-build your PHP-FPM Container `docker-compose build php-fpm`.
 
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> laradock-master
 
 
 
@@ -1322,6 +1345,10 @@ Powerline is required python
 
 
 <br>
+<<<<<<< HEAD
+=======
+>>>>>>> 83a24efa709d15037b0d06ca7f4df235e240d642
+>>>>>>> laradock-master
 <a name="Install-Symfony"></a>
 ## Install Symfony
 
