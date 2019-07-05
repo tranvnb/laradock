@@ -124,6 +124,10 @@ COPY ./auth.json /home/laradock/.composer/auth.json
 # Make sure that ~/.composer belongs to laradock
 RUN chown -R laradock:laradock /home/laradock/.composer
 
+# Export composer vendor path
+RUN echo "" >> ~/.bashrc && \
+    echo 'export PATH="$HOME/.composer/vendor/bin:$PATH"' >> ~/.bashrc
+
 USER laradock
 
 # Check if global install need to be ran
@@ -287,6 +291,19 @@ RUN if [ ${INSTALL_IMAP} = true ]; then \
 ;fi
 
 ###########################################################################
+# Subversion:
+###########################################################################
+
+USER root
+
+ARG INSTALL_SUBVERSION=false
+
+RUN if [ ${INSTALL_SUBVERSION} = true ]; then \
+    apt-get install -y subversion \
+;fi
+
+
+###########################################################################
 # xDebug:
 ###########################################################################
 
@@ -332,7 +349,7 @@ ARG BLACKFIRE_CLIENT_TOKEN
 ENV BLACKFIRE_CLIENT_TOKEN ${BLACKFIRE_CLIENT_TOKEN}
 
 RUN if [ ${INSTALL_XDEBUG} = false -a ${INSTALL_BLACKFIRE} = true ]; then \
-    curl -L https://packagecloud.io/gpg.key | apt-key add - && \
+    curl -L https://packages.blackfire.io/gpg.key | apt-key add - && \
     echo "deb http://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list && \
     apt-get update -yqq && \
     apt-get install blackfire-agent \
@@ -423,10 +440,26 @@ RUN if [ ${INSTALL_SWOOLE} = true ]; then \
 ;fi
 
 ###########################################################################
-# Drush:
+# Taint EXTENSION
 ###########################################################################
 
-USER root
+ARG INSTALL_TAINT=false
+
+RUN if [ "${INSTALL_TAINT}" = true ]; then \
+    # Install Php TAINT Extension
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
+      pecl install taint && \
+      echo "extension=taint.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/taint.ini && \
+      ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/taint.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-taint.ini && \
+      php -m | grep -q 'taint'; \
+    fi \
+;fi
+
+###########################################################################
+# Libpng16 EXTENSION
+###########################################################################
+
+ARG INSTALL_LIBPNG=false
 
 RUN if [ ${INSTALL_LIBPNG} = true ]; then \
     apt-get update && \
@@ -495,7 +528,7 @@ USER laradock
 ###########################################################################
 
 # Check if NVM needs to be installed
-ARG NODE_VERSION=stable
+ARG NODE_VERSION=node
 ENV NODE_VERSION ${NODE_VERSION}
 ARG INSTALL_NODE=false
 ARG INSTALL_NPM_GULP=false
@@ -686,6 +719,15 @@ RUN if [ ${INSTALL_LARAVEL_ENVOY} = true ]; then \
 
 USER laradock
 
+ARG INSTALL_LARAVEL_INSTALLER=false
+
+RUN if [ ${INSTALL_LARAVEL_INSTALLER} = true ]; then \
+    # Install the Laravel Installer
+	composer global require "laravel/installer" \
+;fi
+
+USER root
+
 ARG COMPOSER_REPO_PACKAGIST
 ENV COMPOSER_REPO_PACKAGIST ${COMPOSER_REPO_PACKAGIST}
 
@@ -818,9 +860,9 @@ USER root
 ARG INSTALL_IMAGE_OPTIMIZERS=false
 
 RUN if [ ${INSTALL_IMAGE_OPTIMIZERS} = true ]; then \
-    apt-get install -y --force-yes jpegoptim optipng pngquant gifsicle && \
+    apt-get install -y jpegoptim optipng pngquant gifsicle && \
     if [ ${INSTALL_NODE} = true ]; then \
-        . ~/.bashrc && npm install -g svgo \
+        exec bash && . ~/.bashrc && npm install -g svgo \
     ;fi\
 ;fi
 
@@ -854,8 +896,8 @@ ARG INSTALL_PYTHON=false
 
 RUN if [ ${INSTALL_PYTHON} = true ]; then \
   apt-get -y install python python-pip python-dev build-essential  \
-  && pip install --upgrade pip  \
-  && pip install --upgrade virtualenv \
+  && python -m pip install --upgrade pip  \
+  && python -m pip install --upgrade virtualenv \
 ;fi
 
 ###########################################################################
@@ -884,7 +926,7 @@ USER root
 ARG INSTALL_IMAGEMAGICK=false
 
 RUN if [ ${INSTALL_IMAGEMAGICK} = true ]; then \
-    apt-get install -y --force-yes imagemagick php-imagick \
+    apt-get install -y imagemagick php-imagick \
 ;fi
 
 ###########################################################################
@@ -978,6 +1020,32 @@ RUN if [ ${INSTALL_MYSQL_CLIENT} = true ]; then \
 ;fi
 
 ###########################################################################
+# ping:
+###########################################################################
+
+USER root
+
+ARG INSTALL_PING=false
+
+RUN if [ ${INSTALL_PING} = true ]; then \
+    apt-get update -yqq && \
+    apt-get -y install inetutils-ping \
+;fi
+
+###########################################################################
+# sshpass:
+###########################################################################
+
+USER root
+
+ARG INSTALL_SSHPASS=false
+
+RUN if [ ${INSTALL_SSHPASS} = true ]; then \
+    apt-get update -yqq && \
+    apt-get -y install sshpass \
+;fi
+
+###########################################################################
 # FFMpeg:
 ###########################################################################
 
@@ -988,6 +1056,19 @@ ARG INSTALL_FFMPEG=false
 RUN if [ ${INSTALL_FFMPEG} = true ]; then \
   apt-get -y install ffmpeg \
 ;fi
+
+###########################################################################
+# GNU Parallel:
+###########################################################################
+
+USER root
+
+ARG INSTALL_GNU_PARALLEL=false
+
+RUN if [ ${INSTALL_GNU_PARALLEL} = true ]; then \
+  apt-get -y install parallel \
+;fi
+
 
 ###########################################################################
 # Check PHP version:
