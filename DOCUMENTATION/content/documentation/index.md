@@ -1,8 +1,10 @@
 ---
-title: Documentation
+title: 3. Documentation
 type: index
 weight: 3
 ---
+
+
 
 
 
@@ -134,6 +136,7 @@ More info on Containers rebuilding [here](#Build-Re-build-Containers).
 
 
 
+
 <br>
 <a name="Build-Re-build-Containers"></a>
 ## Build/Re-build Containers
@@ -150,6 +153,7 @@ docker-compose build {container-name}
 ```
 
 You might use the `--no-cache` option if you want full rebuilding (`docker-compose build --no-cache {container-name}`).
+
 
 
 
@@ -188,8 +192,6 @@ More [options](https://docs.docker.com/compose/reference/logs/)
 
 
 
-
-
 <br>
 <a name="PHP"></a>
 
@@ -201,7 +203,7 @@ More [options](https://docs.docker.com/compose/reference/logs/)
 <a name="Install-PHP-Extensions"></a>
 ## Install PHP Extensions
 
-Before installing PHP extensions, you have to decide whether you need for the `FPM` or `CLI` because each lives on a different container, if you need it for both you have to edit both containers.
+Before installing PHP extensions, you have to decide first whether you need `FPM` or `CLI`, because each of them has it's own different container, if you need it for both, you have to edit both containers.
 
 The PHP-FPM extensions should be installed in `php-fpm/Dockerfile-XX`. *(replace XX with your default PHP version number)*.
 <br>
@@ -243,10 +245,11 @@ docker-compose build php-fpm
 
 
 
+
+
 <br>
 <a name="Change-the-PHP-CLI-Version"></a>
 ## Change the PHP-CLI Version
-By default **PHP-CLI 7.0** is running.
 
 >Note: it's not very essential to edit the PHP-CLI version. The PHP-CLI is only used for the Artisan Commands & Composer. It doesn't serve your Application code, this is the PHP-FPM job.
 
@@ -271,66 +274,28 @@ docker-compose build workspace
 
 
 
+
+
 <br>
 <a name="Install-xDebug"></a>
 ## Install xDebug
 
 1 - First install `xDebug` in the Workspace and the PHP-FPM Containers:
 <br>
-a) open the `docker-compose.yml` file
+a) open the `.env` file
 <br>
-b) search for the `INSTALL_XDEBUG` argument under the Workspace Container
+b) search for the `WORKSPACE_INSTALL_XDEBUG` argument under the Workspace Container
 <br>
 c) set it to `true`
 <br>
-d) search for the `INSTALL_XDEBUG` argument under the PHP-FPM Container
+d) search for the `PHP_FPM_INSTALL_XDEBUG` argument under the PHP-FPM Container
 <br>
 e) set it to `true`
 
-It should be like this:
-
-```yml
-    workspace:
-        build:
-            context: ./workspace
-            args:
-                - INSTALL_XDEBUG=true
-    ...
-    php-fpm:
-        build:
-            context: ./php-fpm
-            args:
-                - INSTALL_XDEBUG=true
-    ...
-```
-
-2 - Open `laradock/workspace/xdebug.ini` and `laradock/php-fpm/xdebug.ini` and enable at least the following configurations:
-
-```
-xdebug.remote_autostart=1
-xdebug.remote_enable=1
-xdebug.remote_connect_back=1
-```
-
-3 - Re-build the containers `docker-compose build workspace php-fpm`
+2 - Re-build the containers `docker-compose build workspace php-fpm`
 
 For information on how to configure xDebug with your IDE and work it out, check this [Repository](https://github.com/LarryEitel/laravel-laradock-phpstorm) or follow up on the next section if you use linux and PhpStorm.
 
-
-<a name="Setup remote debugging for PhpStorm on Linux"></a>
-## Setup remote debugging for PhpStorm on Linux
-
- - Make sure you have followed the steps above in the [Install Xdebug section](#install-xdebug).
-
- - Make sure Xdebug accepts connections and listens on port 9000. (Should be default configuration).
-
-![Debug Configuration](/images/photos/PHPStorm/linux/configuration/debugConfiguration.png "Debug Configuration").
-
- - Create a server with name `laradock` (matches **PHP_IDE_CONFIG** key in environment file) and make sure to map project root path with server correctly.
-
-![Server Configuration](/images/photos/PHPStorm/linux/configuration/serverConfiguration.png "Server Configuration").
-
- - Start listening for debug connections, place a breakpoint and you are good to go !
 
 
 <br>
@@ -346,6 +311,30 @@ To control the behavior of xDebug (in the `php-fpm` Container), you can run the 
 - See the status: `.php-fpm/xdebug status`.
 
 Note: If `.php-fpm/xdebug` doesn't execute and gives `Permission Denied` error the problem can be that file `xdebug` doesn't have execution access. This can be fixed by running `chmod` command  with desired access permissions.
+
+
+
+<br>
+<a name="Install-phpdbg"></a>
+## Install phpdbg
+
+Install `phpdbg` in the Workspace and the PHP-FPM Containers:
+
+<br>
+1 - Open the `.env`.
+
+2 - Search for `WORKSPACE_INSTALL_PHPDBG`.
+
+3 - Set value to `true`
+
+4 - Do the same for `PHP_FPM_INSTALL_PHPDBG`
+
+```dotenv
+WORKSPACE_INSTALL_PHPDBG=true
+```
+```dotenv
+PHP_FPM_INSTALL_PHPDBG=true
+```
 
 
 
@@ -378,23 +367,12 @@ Always download the latest version of [Loaders for ionCube ](http://www.ioncube.
 <a name="Install-Deployer"></a>
 ## Install Deployer (Deployment tool for PHP)
 
-1 - Open the `docker-compose.yml` file
+1 - Open the `.env` file
 <br>
-2 - Search for the `INSTALL_DEPLOYER` argument under the Workspace Container
+2 - Search for the `WORKSPACE_INSTALL_DEPLOYER` argument under the Workspace Container
 <br>
 3 - Set it to `true`
 <br>
-
-It should be like this:
-
-```yml
-    workspace:
-        build:
-            context: ./workspace
-            args:
-                - INSTALL_DEPLOYER=true
-    ...
-```
 
 4 - Re-build the containers `docker-compose build workspace`
 
@@ -431,6 +409,7 @@ If you encounter logs error:
 docker-compose run --user=root --rm sonarqube chown sonarqube:sonarqube /opt/sonarqube/logs
 ```
 [**SonarQube Documentation Here**](https://docs.sonarqube.org/latest/)
+
 
 
 
@@ -475,34 +454,14 @@ To learn more about how Docker publishes ports, please read [this excellent post
 
 
 
-<br>
-<a name="Use-Jenkins"></a>
-## Use Jenkins
-
-1) Boot the container `docker-compose up -d jenkins`. To enter the container type `docker-compose exec jenkins bash`.
-
-2) Go to `http://localhost:8090/` (if you didn't chanhed your default port mapping) 
-
-3) Authenticate from the web app.
-
-- Default username is `admin`.
-- Default password is `docker-compose exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword`. 
-
-(To enter container as root type `docker-compose exec --user root jenkins bash`).
-
-4) Install some plugins.
-
-5) Create your first Admin user, or continue as Admin.
-
-Note: to add user go to `http://localhost:8090/securityRealm/addUser` and to restart it from the web app visit `http://localhost:8090/restart`.
-
-You may wanna change the default security configuration, so go to `http://localhost:8090/configureSecurity/` under Authorization and choosing "Anyone can do anything" or "Project-based Matrix Authorization Strategy" or anything else.
-
-
-
 
 <br>
 <a name="Laravel"></a>
+
+
+
+
+
 
 <a name="Install-Laravel"></a>
 ## Install Laravel from a Docker Container
@@ -632,11 +591,6 @@ docker-compose up -d php-worker
 
 
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
->>>>>>> laradock-master
 
 <br>
 <a name="Use-Mailu"></a>
@@ -718,10 +672,6 @@ You may wanna change the default security configuration, so go to `http://localh
 
 
 
-<<<<<<< HEAD
-=======
->>>>>>> 83a24efa709d15037b0d06ca7f4df235e240d642
->>>>>>> laradock-master
 <br>
 <a name="Use-Redis"></a>
 ## Use Redis
@@ -821,32 +771,15 @@ Read the [Laravel official documentation](https://laravel.com/docs/5.7/redis#con
 
 1 - First install `mongo` in the Workspace and the PHP-FPM Containers:
 <br>
-a) open the `docker-compose.yml` file
+a) open the `.env` file
 <br>
-b) search for the `INSTALL_MONGO` argument under the Workspace Container
+b) search for the `WORKSPACE_INSTALL_MONGO` argument under the Workspace Container
 <br>
 c) set it to `true`
 <br>
-d) search for the `INSTALL_MONGO` argument under the PHP-FPM Container
+d) search for the `PHP_FPM_INSTALL_MONGO` argument under the PHP-FPM Container
 <br>
 e) set it to `true`
-
-It should be like this:
-
-```yml
-    workspace:
-        build:
-            context: ./workspace
-            args:
-                - INSTALL_MONGO=true
-    ...
-    php-fpm:
-        build:
-            context: ./php-fpm
-            args:
-                - INSTALL_MONGO=true
-    ...
-```
 
 2 - Re-build the containers `docker-compose build workspace php-fpm`
 
@@ -1027,6 +960,24 @@ docker-compose up -d adminer
 
 
 
+
+<br>
+<a name="Use-Portainer"></a>
+## Use Portainer
+
+1 - Run the Portainer Container (`portainer`) with the `docker-compose up` command. Example:
+
+```bash
+docker-compose up -d portainer
+```
+
+2 - Open your browser and visit the localhost on port **9010**:  `http://localhost:9010`
+
+
+
+
+
+
 <br>
 <a name="Use-pgAdmin"></a>
 ## Use PgAdmin
@@ -1119,7 +1070,7 @@ docker-compose up -d elasticsearch
 
 2 - Open your browser and visit the localhost on port **9200**:  `http://localhost:9200`
 
-> The default username is `user` and the default password is `changeme`.
+> The default username is `elastic` and the default password is `changeme`.
 
 ### Install ElasticSearch Plugin
 
@@ -1198,20 +1149,11 @@ docker-compose up -d rethinkdb
 - set the `DB_DATABASE` to `database`.
 
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
->>>>>>> laradock-master
 #### Additional Notes
 
 - You may do backing up of your data using the next reference: [backing up your data](https://www.rethinkdb.com/docs/backup/).
 
 
-<<<<<<< HEAD
-=======
->>>>>>> 83a24efa709d15037b0d06ca7f4df235e240d642
->>>>>>> laradock-master
 <br>
 <a name="Use-Minio"></a>
 ## Use Minio
@@ -1241,6 +1183,9 @@ docker-compose up -d minio
   S3_REGION=us-east-1
   S3_BUCKET=bucket
   ```
+
+
+
 
 
 
@@ -1280,7 +1225,10 @@ docker-compose up -d aws
 
 3 - Access the aws container with `docker-compose exec aws bash`
 
-4 - To start using eb cli inside the container, initiaze your project first by doing 'eb init'. Read the [aws eb cli](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-configuration.html) docs for more details.
+4 - To start using eb cli inside the container, initialize your project first by doing 'eb init'. Read the [aws eb cli](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-configuration.html) docs for more details.
+
+
+
 
 
 
@@ -1298,7 +1246,10 @@ docker-compose up -d grafana
 
 3 - Open your browser and visit the localhost on port **3000** at the following URL: `http://localhost:3000`
 
-4 - Login using the credentials User = `admin` Passwort = `admin`. Change the password in the webinterface if you want to.
+4 - Login using the credentials User = `admin`, Password = `admin`. Change the password in the web interface if you want to.
+
+
+
 
 
 
@@ -1457,11 +1408,6 @@ To install CodeIgniter 3 on Laradock all you have to do is the following simple 
 3 - Re-build your PHP-FPM Container `docker-compose build php-fpm`.
 
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
->>>>>>> laradock-master
 
 
 
@@ -1482,10 +1428,6 @@ Powerline is required python
 
 
 <br>
-<<<<<<< HEAD
-=======
->>>>>>> 83a24efa709d15037b0d06ca7f4df235e240d642
->>>>>>> laradock-master
 <a name="Install-Symfony"></a>
 ## Install Symfony
 
@@ -1498,6 +1440,11 @@ Powerline is required python
 4 - Run `docker-compose restart` if the container was already running, before the step above.
 
 5 - Visit `symfony.test`
+
+
+
+
+
 
 <br>
 <a name="Misc"></a>
@@ -1560,6 +1507,8 @@ You can add your cron jobs to `workspace/crontab/root` after the `php artisan` l
 
 Make sure you [change the timezone](#Change-the-timezone) if you don't want to use the default (UTC).
 
+If you are on Windows, verify that the line endings for this file are LF only, otherwise the cron jobs will silently fail.
+
 
 
 
@@ -1593,6 +1542,11 @@ ssh -o PasswordAuthentication=no    \
 
 To login as root, replace laradock@localhost with root@localhost.
 
+
+
+
+
+
 <br>
 <a name="Change-the-MySQL-Version"></a>
 ## Change the (MySQL) Version
@@ -1607,22 +1561,6 @@ MYSQL_VERSION=5.7
 ```
 
 Available versions are: 5.5, 5.6, 5.7, 8.0, or latest.  See https://store.docker.com/images/mysql for more information.
-
-
-
-
-
-
-<br>
-<a name="MySQL-access-from-host"></a>
-## MySQL access from host
-
-You can forward the MySQL/MariaDB port to your host by making sure these lines are added to the `mysql` or `mariadb` section of the `docker-compose.yml` or in your [environment specific Compose](https://docs.docker.com/compose/extends/) file.
-
-```
-ports:
-    - "3306:3306"
-```
 
 
 
@@ -1647,6 +1585,7 @@ The default username and password for the root MySQL user are `root` and `root `
 
 
 
+
 <br>
 <a name="Create-Multiple-Databases"></a>
 ## Create Multiple Databases (MySQL)
@@ -1657,6 +1596,8 @@ Create `createdb.sql` from `mysql/docker-entrypoint-initdb.d/createdb.sql.exampl
 CREATE DATABASE IF NOT EXISTS `your_db_1` COLLATE 'utf8_general_ci' ;
 GRANT ALL ON `your_db_1`.* TO 'mysql_user'@'%' ;
 ```
+
+
 
 
 
@@ -1711,20 +1652,10 @@ server_name laravel.test;
 
 Enabling Global Composer Install during the build for the container allows you to get your composer requirements installed and available in the container after the build is done.
 
-1 - Open the `docker-compose.yml` file
+1 - Open the `.env` file
 
-2 - Search for the `COMPOSER_GLOBAL_INSTALL` argument under the Workspace Container and set it to `true`
+2 - Search for the `WORKSPACE_COMPOSER_GLOBAL_INSTALL` argument under the Workspace Container and set it to `true`
 
-It should be like this:
-
-```yml
-    workspace:
-        build:
-            context: ./workspace
-            args:
-                - COMPOSER_GLOBAL_INSTALL=true
-    ...
-```
 3 - Now add your dependencies to `workspace/composer.json`
 
 4 - Re-build the Workspace Container `docker-compose build workspace`
@@ -1736,7 +1667,7 @@ It should be like this:
 
 <br>
 <a name="Magento-2-authentication-credentials"></a>
-## Magento 2 authentication credential (composer install)
+## Add authentication credential for Magento 2
 
 1 - Open the `.env` file
 
@@ -1780,20 +1711,9 @@ c - Re-build the Workspace Container `docker-compose build workspace`
 
 To install NVM and NodeJS in the Workspace container
 
-1 - Open the `docker-compose.yml` file
+1 - Open the `.env` file
 
-2 - Search for the `INSTALL_NODE` argument under the Workspace Container and set it to `true`
-
-It should be like this:
-
-```yml
-    workspace:
-        build:
-            context: ./workspace
-            args:
-                - INSTALL_NODE=true
-    ...
-```
+2 - Search for the `WORKSPACE_INSTALL_NODE` argument under the Workspace Container and set it to `true`
 
 3 - Re-build the container `docker-compose build workspace`
 
@@ -1808,21 +1728,61 @@ It should be like this:
 
 Yarn is a new package manager for JavaScript. It is so faster than npm, which you can find [here](http://yarnpkg.com/en/compare).To install NodeJS and [Yarn](https://yarnpkg.com/) in the Workspace container:
 
-1 - Open the `docker-compose.yml` file
+1 - Open the `.env` file
 
-2 - Search for the `INSTALL_NODE` and `INSTALL_YARN` argument under the Workspace Container and set it to `true`
+2 - Search for the `WORKSPACE_INSTALL_NODE` and `WORKSPACE_INSTALL_YARN` argument under the Workspace Container and set it to `true`
 
-It should be like this:
+3 - Re-build the container `docker-compose build workspace`
 
-```yml
-    workspace:
-        build:
-            context: ./workspace
-            args:
-                - INSTALL_NODE=true
-                - INSTALL_YARN=true
-    ...
-```
+
+
+
+
+
+<br>
+<a name="Install-NPM-GULP"></a>
+## Install NPM GULP toolkit
+
+To install NPM GULP toolkit in the Workspace container
+
+1 - Open the `.env` file
+
+2 - Search for the `WORKSPACE_INSTALL_NPM_GULP` argument under the Workspace Container and set it to `true`
+
+3 - Re-build the container `docker-compose build workspace`
+
+
+
+
+
+
+
+<br>
+<a name="Install-NPM-BOWER"></a>
+## Install NPM BOWER package manager
+
+To install NPM BOWER package manager in the Workspace container
+
+1 - Open the `.env` file
+
+2 - Search for the `WORKSPACE_INSTALL_NPM_BOWER` argument under the Workspace Container and set it to `true`
+
+3 - Re-build the container `docker-compose build workspace`
+
+
+
+
+
+
+<br>
+<a name="Install-NPM-VUE-CLI"></a>
+## Install NPM VUE CLI
+
+To install NPM VUE CLI in the Workspace container
+
+1 - Open the `.env` file
+
+2 - Search for the `WORKSPACE_INSTALL_NPM_VUE_CLI` argument under the Workspace Container and set it to `true`
 
 3 - Re-build the container `docker-compose build workspace`
 
@@ -1853,22 +1813,12 @@ To install NPM ANGULAR CLI in the Workspace container
 
 Linuxbrew is a package manager for Linux. It is the Linux version of MacOS Homebrew and can be found [here](http://linuxbrew.sh). To install Linuxbrew in the Workspace container:
 
-1 - Open the `docker-compose.yml` file
+1 - Open the `.env` file
 
-2 - Search for the `INSTALL_LINUXBREW` argument under the Workspace Container and set it to `true`
-
-It should be like this:
-
-```yml
-    workspace:
-        build:
-            context: ./workspace
-            args:
-                - INSTALL_LINUXBREW=true
-    ...
-```
+2 - Search for the `WORKSPACE_INSTALL_LINUXBREW` argument under the Workspace Container and set it to `true`
 
 3 - Re-build the container `docker-compose build workspace`
+
 
 
 
@@ -1927,38 +1877,23 @@ You are free to modify the `aliases.sh` as you see fit, adding your own aliases 
 
 
 
+
 <br>
 <a name="Install-Aerospike-Extension"></a>
 ## Install Aerospike extension
 
 1 - First install `aerospike` in the Workspace and the PHP-FPM Containers:
 <br>
-a) open the `docker-compose.yml` file
+a) open the `.env` file
 <br>
-b) search for the `INSTALL_AEROSPIKE` argument under the Workspace Container
+b) search for the `WORKSPACE_INSTALL_AEROSPIKE` argument under the Workspace Container
 <br>
 c) set it to `true`
 <br>
-d) search for the `INSTALL_AEROSPIKE` argument under the PHP-FPM Container
+d) search for the `PHP_FPM_INSTALL_AEROSPIKE` argument under the PHP-FPM Container
 <br>
 e) set it to `true`
-
-It should be like this:
-
-```yml
-    workspace:
-        build:
-            context: ./workspace
-            args:
-                - INSTALL_AEROSPIKE=true
-    ...
-    php-fpm:
-        build:
-            context: ./php-fpm
-            args:
-                - INSTALL_AEROSPIKE=true
-    ...
-```
+<br>
 
 2 - Re-build the containers `docker-compose build workspace php-fpm`
 
@@ -1971,23 +1906,12 @@ It should be like this:
 <a name="Install-Laravel-Envoy"></a>
 ## Install Laravel Envoy (Envoy Task Runner)
 
-1 - Open the `docker-compose.yml` file
+1 - Open the `.env` file
 <br>
-2 - Search for the `INSTALL_LARAVEL_ENVOY` argument under the Workspace Container
+2 - Search for the `WORKSPACE_INSTALL_LARAVEL_ENVOY` argument under the Workspace Container
 <br>
 3 - Set it to `true`
 <br>
-
-It should be like this:
-
-```yml
-    workspace:
-        build:
-            context: ./workspace
-            args:
-                - INSTALL_LARAVEL_ENVOY=true
-    ...
-```
 
 4 - Re-build the containers `docker-compose build workspace`
 
@@ -2049,14 +1973,12 @@ YAML PHP extension allows you to easily parse and create YAML structured data. I
 4 - Re-build the container `docker-compose build php-fpm`<br>
 
 
-
 <br>
 <a name="phpstorm-debugging"></a>
 ## PHPStorm Debugging Guide
 Remote debug Laravel web and phpunit tests.
 
 [**Debugging Guide Here**](/guides/#PHPStorm-Debugging)
-
 
 
 
@@ -2072,26 +1994,6 @@ Remote debug Laravel web and phpunit tests.
 3. Commit all your changes to your fork.
 4. Pull new stuff from the main repository from time to time.
 
-
-
-
-
-
-
-<br>
-<a name="upgrading-laradock"></a>
-## Upgrading Laradock
-
-Moving from Docker Toolbox (VirtualBox) to Docker Native (for Mac/Windows). Requires upgrading Laradock from v3.* to v4.*:
-
-1. Stop the docker VM `docker-machine stop {default}`
-2. Install Docker for [Mac](https://docs.docker.com/docker-for-mac/) or [Windows](https://docs.docker.com/docker-for-windows/).
-3. Upgrade Laradock to `v4.*.*` (`git pull origin master`)
-4. Use Laradock as you used to do: `docker-compose up -d nginx mysql`.
-
-**Note:** If you face any problem with the last step above: rebuild all your containers
-`docker-compose build --no-cache`
-"Warning Containers Data might be lost!"
 
 
 
@@ -2129,11 +2031,14 @@ Quick Setup giude, (we recommend you check their docs)
 
 
 
+
+
+
 <br>
 <a name="Docker-Sync"></a>
 ### Workaround B: using d4m-nfs
 
-You can use the d4m-nfs solution in 2 ways, one is using the Laradock built it integration, and the other is using the tool separatly. Below is show case of both methods:
+You can use the d4m-nfs solution in 2 ways, the first is by using the built-in Laradock integration, and the second is using the tool separately. Below is show case of both methods:
 
 
 ### B.1: using the built in d4m-nfs integration
@@ -2218,8 +2123,6 @@ Visit the [docker-sync documentation](https://github.com/EugenMayer/docker-sync/
 
 
 
-
-
 <br>
 
 ### B.2: using the d4m-nfs tool
@@ -2238,7 +2141,7 @@ Click on the Docker Icon > Preferences > (remove everything form the list except
 git clone https://github.com/IFSight/d4m-nfs ~/d4m-nfs
 ```
 
-4) Create (or edit) the file `~/d4m-nfs/etc/d4m-nfs-mounts.txt`, and write the follwing configuration in it:
+4) Create (or edit) the file `~/d4m-nfs/etc/d4m-nfs-mounts.txt`, and write the following configuration in it:
 
 ```txt
 /Users:/Users
@@ -2263,105 +2166,17 @@ docker-compose up ...
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 <br>
-<a name="Common-Problems"></a>
-## Common Problems
+<a name="upgrade-laradock"></a>
+## Upgrade Laradock
 
-*Here's a list of the common problems you might face, and the possible solutions.*
+Moving from Docker Toolbox (VirtualBox) to Docker Native (for Mac/Windows). Requires upgrading Laradock from v3.* to v4.*:
 
+1. Stop the docker VM `docker-machine stop {default}`
+2. Install Docker for [Mac](https://docs.docker.com/docker-for-mac/) or [Windows](https://docs.docker.com/docker-for-windows/).
+3. Upgrade Laradock to `v4.*.*` (`git pull origin master`)
+4. Use Laradock as you used to do: `docker-compose up -d nginx mysql`.
 
-
-
-
-
-
-<br>
-## I see a blank (white) page instead of the Laravel 'Welcome' page!
-
-Run the following command from the Laravel root directory:
-
-```bash
-sudo chmod -R 777 storage bootstrap/cache
-```
-
-
-
-
-
-<br>
-## I see "Welcome to nginx" instead of the Laravel App!
-
-Use `http://127.0.0.1` instead of `http://localhost` in your browser.
-
-
-
-
-
-<br>
-## I see an error message containing `address already in use` or `port is already allocated`
-
-Make sure the ports for the services that you are trying to run (22, 80, 443, 3306, etc.) are not being used already by other programs on the host, such as a built in `apache`/`httpd` service or other development tools you have installed.
-
-
-
-
-
-<br>
-## I get NGINX error 404 Not Found on Windows.
-
-1. Go to docker Settings on your Windows machine.
-2. Click on the `Shared Drives` tab and check the drive that contains your project files.
-3. Enter your windows username and password.
-4. Go to the `reset` tab and click restart docker.
-
-
-
-
-
-<br>
-## The time in my services does not match the current time
-
-1. Make sure you've [changed the timezone](#Change-the-timezone).
-2. Stop and rebuild the containers (`docker-compose up -d --build <services>`)
-
-
-
-
-
-<br>
-## I get MySQL connection refused
-
-This error sometimes happens because your Laravel application isn't running on the container localhost IP (Which is 127.0.0.1). Steps to fix it:
-
-* Option A
-  1. Check your running Laravel application IP by dumping `Request::ip()` variable using `dd(Request::ip())` anywhere on your application. The result is the IP of your Laravel container.
-  2. Change the `DB_HOST` variable on env with the IP that you received from previous step.
-* Option B
-   1. Change the `DB_HOST` value to the same name as the MySQL docker container. The Laradock docker-compose file currently has this as `mysql`
-
-## I get stuck when building nginx on `fetch http://mirrors.aliyun.com/alpine/v3.5/main/x86_64/APKINDEX.tar.gz`
-
-As stated on [#749](https://github.com/laradock/laradock/issues/749#issuecomment-419652646), Already fixed，just set `CHANGE_SOURCE` to false.
-
-## Custom composer repo packagist url and npm registry url
-
-In China, the origin source of composer and npm is very slow. You can add `WORKSPACE_NPM_REGISTRY` and `WORKSPACE_COMPOSER_REPO_PACKAGIST` config in `.env` to use your custom source.
-
-Example:
-```bash
-WORKSPACE_NPM_REGISTRY=https://registry.npm.taobao.org
-WORKSPACE_COMPOSER_REPO_PACKAGIST=https://packagist.phpcomposer.com
-```
+**Note:** If you face any problem with the last step above: rebuild all your containers
+`docker-compose build --no-cache`
+"Warning Containers Data might be lost!"
